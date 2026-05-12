@@ -2,11 +2,10 @@ services:
   - type: web
     name: warehouse-api
     runtime: python
-    rootDir: warehouse_config
     region: oregon
     plan: free
     buildCommand: ./build.sh
-    startCommand: gunicorn warehouse_config.wsgi:application --workers=4 --worker-class=gevent --bind=0.0.0.0:$PORT
+    startCommand: cd warehouse_config && gunicorn warehouse_config.wsgi:application --workers=4 --worker-class=gevent --bind=0.0.0.0:$PORT
     envVars:
       - key: SECRET_KEY
         generateValue: true
