@@ -10,3 +10,4 @@ djoser
 djangorestframework-simplejwt
 cloudinary
 django-cloudinary-storage
+gevent
