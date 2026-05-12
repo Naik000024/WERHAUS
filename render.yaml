@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: warehouse-api
+    runtime: python
+    rootDir: warehouse_config
+    region: oregon
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: gunicorn warehouse_config.wsgi:application --workers=4 --worker-class=gevent --bind=0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: warehouse-db
+          property: connectionString
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.12"
+
+  - type: static
+    name: warehouse-frontend
+    rootDir: warehouse_config/frontend
+    region: oregon
+    buildCommand: npm install && npm run build
+    staticPublishPath: build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://warehouse-api.onrender.com
+
+databases:
+  - name: warehouse-db
+    databaseName: warehouse
+    region: oregon
+    plan: free
+    ipAllowList: []
